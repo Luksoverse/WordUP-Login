@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('lukso_wp_login'));
+const root = ReactDOM.createRoot(document.getElementById('lwpupl_login'));
 root.render(
   <React.StrictMode>
     <App />
