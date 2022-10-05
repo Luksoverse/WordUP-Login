@@ -8,24 +8,24 @@
 * Author URI: https://luksoverse.io/
 */
  
-function lukso_wp_login_init() {
+function lwpupl_login_init() {
 	
     $path = "/frontend/build/static";
     if(getenv('WP_ENV')=="development") {
         $path = "/frontend/build/static";
     }
 	
-    wp_register_script("lukso_wp_login_js", plugins_url($path."/js/main.88034b7b.js", __FILE__), array(), "1.0", false);
-    wp_register_style("lukso_wp_login_css", plugins_url($path."/css/main.7a6bb05e.css", __FILE__), array(), "1.0", "all");
+    wp_register_script("lwpupl_login_js", plugins_url($path."/js/main.80b868bd.js", __FILE__), array(), "1.0", false);
+    wp_register_style("lwpupl_login_css", plugins_url($path."/css/main.7a6bb05e.css", __FILE__), array(), "1.0", "all");
 	
 }
 
-add_action( 'init', 'lukso_wp_login_init' );
+add_action( 'init', 'lwpupl_login_init' );
 
 
-add_action('admin_menu', 'lukso_menu');
+add_action('admin_menu', 'lwpupl_menu');
 
-function lukso_menu() { 
+function lwpupl_menu() { 
 
   add_menu_page( 
       'Login with UP', 
@@ -39,94 +39,90 @@ function lukso_menu() {
 }
 
 // Function for calling app but with the register class set
-add_shortcode('lukso_wp_register', 'lukso_wp_register');
+add_shortcode('lwpupl_register', 'lwpupl_register');
 
-function lukso_wp_register() {
+function lwpupl_register() {
 	
 
 	
-    wp_enqueue_script("lukso_wp_login_js", '1.0', true);
-    wp_enqueue_style("lukso_wp_login_css", "1.0", true);
-    return "<div class=\"register\" id=\"lukso_wp_login\"></div>";
+    wp_enqueue_script("lwpupl_login_js", '1.0', true);
+    wp_enqueue_style("lwpupl_login_css", "1.0", true);
+    return "<div class=\"register\" id=\"lwpupl_login\"></div>";
 	
 }
 
 // Function for the short code that call React app
-add_shortcode('lukso_wp_login', 'lukso_wp_login');
+add_shortcode('lwpupl_login', 'lwpupl_login');
 
-function lukso_wp_login() {
+function lwpupl_login() {
 	
-	wp_enqueue_script('lukso_wp_login_js', 'lukso_wp_login_js','false','1.0',true);
-    //wp_enqueue_script("lukso_wp_login_js", '1.0', true);
-    wp_enqueue_style("lukso_wp_login_css", 'lukso_wp_login_js','false','1.0',true);
-    return "<div id=\"lukso_wp_login\"></div>";
+	wp_enqueue_script('lwpupl_login_js', 'lwpupl_login_js','false','1.0',true);
+    //wp_enqueue_script("lwpupl_login_js", '1.0', true);
+    wp_enqueue_style("lwpupl_login_css", 'lwpupl_login_js','false','1.0',true);
+    return "<div id=\"lwpupl_login\"></div>";
 	
 }
 
-add_action( 'login_form', 'sign_in_with_lukso' );
 
-function sign_in_with_lukso( $input = '' ) {
+add_action( 'login_form', 'lwpupl_sign_in_with_lukso' );
+
+function lwpupl_sign_in_with_lukso( $input = '' ) {
 	
-	wp_enqueue_script("lukso_wp_login_js", '1.0', true);
-    wp_enqueue_style("lukso_wp_login_css", '1.0', true);
+	wp_enqueue_script("lwpupl_login_js", '1.0', true);
+    wp_enqueue_style("lwpupl_login_css", '1.0', true);
 	?>
-    <div id="lukso_wp_login"></div>
+    <div id="lwpupl_login"></div>
 	
 	<?php
    
 }
-add_action( 'wp_ajax_nopriv_get_data', 'get_data' );
-add_action( 'wp_ajax_get_data', 'get_data' );
 
-function get_data(  ) {
+
+add_action( 'wp_ajax_nopriv_lwpupl_get_data', 'lwpupl_get_data' );
+add_action( 'wp_ajax_lwpupl_get_data', 'lwpupl_get_data' );
+
+function lwpupl_get_data(  ) {
 	
 	$mode = 2; // In login mode, unless otherwise stated.
-	
-	$address = $_POST['address'];
+	/*
+	$address = filter_var($_POST['address'], FILTER_SANITIZE_STRING);
 	//$nonce = sanitize($_POST['nonce']);
-	$signature = $_POST['signature'];
-	
-	//$address = json_decode($address);
-	//echo $address;
-
-	/* method: 'POST',
-	  headers: { 'Content-Type': 'application/json' },
-	  body: JSON.stringify({ publicAddress, signature })
+	$signature = filter_var($_POST['signature'], FILTER_SANITIZE_STRING);
 	*/
+	
+	$address = sanitize_file_name($_POST['address']);
+	//$nonce = sanitize($_POST['nonce']);
+	$signature = sanitize_file_name($_POST['signature']);
 
 
+	$fields = array(
+		'publicAddress'  => $address,
+		'signature' => $signature,
+		'format' => 'json',
+				'returnFormat' => 'json'
+	);
 
-	$url = "https://uplogin-auth.luksoverse.io/auth";
-	$ch = curl_init( $url );
-	# Setup request to send json via POST.
-	$payload = json_encode( array( "publicAddress"=> $address, "signature"=> $signature ) );
-	curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
-	curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-	# Return response instead of printing.
-	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-	curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-	# Send request.
-	$result = curl_exec($ch);
+	$fields = json_encode($fields);
 
-	# Print response.
-	//echo "<pre>$result</pre>";
+	$data = array(
+			'method' => 'POST',
+			'headers' => 'Content-Type:application/json',
+			'sslverify' => false,
+			'body' => $fields
+			);
 
 
+	$response = wp_remote_post( 'https://uplogin-auth.luksoverse.io/auth', $data  );
 
-  
-	$err = curl_error($ch);
-	curl_close($ch);
-	if ($err) {
-	//Only show errors while testing
-	//echo "cURL Error #:" . $err;
-	echo $err;
-	} else {
-	//The API returns data in JSON format, so first convert that to an array of data objects
-	$responseObj = json_decode($result);
-	//Gather the air quality value and timestamp for the first and last elements
-	//print_r( $responseObj);
 
+	if( is_wp_error( $response ) ) {
+		return false; // Bail early
 	}
+
+
+	$responseObj =  json_decode($response['body']);
+	
+	//print_r( $responseObj );
   
 	if ( $responseObj->verified == 1 ) {
 	
@@ -243,15 +239,15 @@ function get_data(  ) {
 
 	wp_die();  //die();
 
-} // End get_data
+} // End lwpupl_get_data
 
 
 
-add_action( 'wp_ajax_getUserStatus', 'getUserStatus' );
-add_action( 'wp_ajax_nopriv_getUserStatus', 'getUserStatus' );
+add_action( 'wp_ajax_lwpupl_getUserStatus', 'lwpupl_getUserStatus' );
+add_action( 'wp_ajax_nopriv_lwpupl_getUserStatus', 'lwpupl_getUserStatus' );
 
 // Check whether user has already asociated their UP profile with WP account
-function getUserStatus () {
+function lwpupl_getUserStatus () {
 	
 	// First check if they are logged in as an extra barrier against abuse
 	if ( is_user_logged_in() ) {
@@ -316,11 +312,11 @@ function getUserStatus () {
 }
 
 
-add_action( 'wp_ajax_remove_user', 'remove_user' );
-add_action( 'wp_ajax_nopriv_remove_user', 'remove_user' );
+add_action( 'wp_ajax_lwpupl_remove_user', 'lwpupl_remove_user' );
+add_action( 'wp_ajax_nopriv_lwpupl_remove_user', 'lwpupl_remove_user' );
 
 // Removes user UP profile from usermeta table - Disconnects UP profile from WP
-function remove_user () {
+function lwpupl_remove_user () {
 	
 	$mode = 3;
 
@@ -371,7 +367,7 @@ function remove_user () {
 	
 	}
 
-} // End remove_user
+} // End lwpupl_remove_user
 
 
 
@@ -379,58 +375,46 @@ function remove_user () {
 
 
 // Register new user
-add_action( 'wp_ajax_registerUser', 'registerUser' );
-add_action( 'wp_ajax_nopriv_registerUser', 'registerUser' );
+add_action( 'wp_ajax_lwpupl_registerUser', 'lwpupl_registerUser' );
+add_action( 'wp_ajax_nopriv_lwpupl_registerUser', 'lwpupl_registerUser' );
 
-function registerUser () {
+function lwpupl_registerUser () {
 	
-	$address = $_POST['address'];
+	$address = sanitize_file_name($_POST['address']);
 	//$nonce = sanitize($_POST['nonce']);
-	$signature = $_POST['signature'];
-	$username = $_POST['username'];
-	$profileAvatar = $_POST['profileAvatar'];
+	$signature = sanitize_file_name($_POST['signature']);
+	$username = sanitize_file_name($_POST['username']);
+	$profileAvatar = sanitize_file_name($_POST['profileAvatar']);
 	
-	//$address = json_decode($address);
-	//echo $address;
+	
+	
+	$fields = array(
+		'publicAddress'  => $address,
+		'signature' => $signature,
+		'format' => 'json',
+		'returnFormat' => 'json'
+	);
 
-	/* method: 'POST',
-	  headers: { 'Content-Type': 'application/json' },
-	  body: JSON.stringify({ publicAddress, signature })
-	*/
+	$fields = json_encode($fields);
 
-
-
-	$url = "https://uplogin-auth.luksoverse.io/auth";
-	$ch = curl_init( $url );
-	# Setup request to send json via POST.
-	$payload = json_encode( array( "publicAddress"=> $address, "signature"=> $signature ) );
-	curl_setopt( $ch, CURLOPT_POSTFIELDS, $payload );
-	curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-	# Return response instead of printing.
-	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-	curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-	# Send request.
-	$result = curl_exec($ch);
-
-	# Print response.
-	//echo "<pre>$result</pre>";
+	$data = array(
+			'method' => 'POST',
+			'headers' => 'Content-Type:application/json',
+			'sslverify' => false,
+			'body' => $fields
+			);
 
 
+	$response = wp_remote_post( 'https://uplogin-auth.luksoverse.io/auth', $data  );
 
-  
-	$err = curl_error($ch);
-	curl_close($ch);
-	if ($err) {
-	//Only show errors while testing
-	//echo "cURL Error #:" . $err;
-	echo $err;
-	} else {
-	//The API returns data in JSON format, so first convert that to an array of data objects
-	$responseObj = json_decode($result);
-	//Gather the air quality value and timestamp for the first and last elements
-	//print_r( $responseObj);
 
+	if( is_wp_error( $response ) ) {
+		return false; // Bail early
 	}
+
+
+	$responseObj =  json_decode($response['body']);
+	
   
 	if ( $responseObj->verified == 1 ) {
 	
@@ -529,12 +513,12 @@ function registerUser () {
 	
 }
 
-add_action( 'wp_ajax_checkUsername', 'checkUsername' );
-add_action( 'wp_ajax_nopriv_checkUsername', 'checkUsername' );
+add_action( 'wp_ajax_lwpupl_checkUsername', 'lwpupl_checkUsername' );
+add_action( 'wp_ajax_nopriv_lwpupl_checkUsername', 'lwpupl_checkUsername' );
 
-function checkUsername () {
+function lwpupl_checkUsername () {
 	
-	$username = $_POST['username'];
+	$username = sanitize_file_name($_POST['username']);
 	
 	if ( username_exists ( $username ) ) {
 		
@@ -556,11 +540,14 @@ function checkUsername () {
 }
 
 
-function wpdocs_lukso_user_profile_fields( ) {
 
-	sign_in_with_lukso();
+function wpdocs_lwpupl_user_profile_fields( ) {
+
+	lwpupl_sign_in_with_lukso();
 
 }
-add_action( 'show_user_profile', 'sign_in_with_lukso' );
-add_action( 'edit_user_profile', 'sign_in_with_lukso' );
+add_action( 'show_user_profile', 'lwpupl_sign_in_with_lukso' );
+add_action( 'edit_user_profile', 'lwpupl_sign_in_with_lukso' );
+
+
 

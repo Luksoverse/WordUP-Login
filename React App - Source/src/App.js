@@ -98,7 +98,7 @@ Run once - useEffect
 	 
   runOnce = 0;
   
-  Modal.setAppElement('#lukso_wp_login');
+  Modal.setAppElement('#lwpupl_login');
   
   // Check if we are on the profile page for WordPress
   if ( uri == "/wp-admin/profile.php" ) {
@@ -115,8 +115,8 @@ Run once - useEffect
     //console.log(uri);
 
 
-    // getUserStatus will check if the user has connected their UP profile to their account
-	dataSend.append( 'action', 'getUserStatus' );
+    // lwpupl_getUserStatus will check if the user has connected their UP profile to their account
+	dataSend.append( 'action', 'lwpupl_getUserStatus' );
 	
 	const res = await fetch('/wp-admin/admin-ajax.php', {
 		method: 'POST',
@@ -168,8 +168,8 @@ Run once - useEffect
     //console.log(uri);
 
 
-    // getUserStatus will check if the user has connected their UP profile to their account
-	dataSend.append( 'action', 'getUserStatus' );
+    // lwpupl_getUserStatus will check if the user has connected their UP profile to their account
+	dataSend.append( 'action', 'lwpupl_getUserStatus' );
 	
 	const res = await fetch('/wp-admin/admin-ajax.php', {
 		method: 'POST',
@@ -242,14 +242,14 @@ async function fetchProfileData(address) {
   }
 }
 
-async function checkUsername(username) {
+async function lwpupl_checkUsername(username) {
 
 	//console.log(username.username);
 	var tempUsername = document.getElementById("UPusername").value;
 	console.log(tempUsername);
 	var dataSend = new FormData();
 	dataSend.append( 'username', tempUsername );
-	dataSend.append( 'action', 'checkUsername' );
+	dataSend.append( 'action', 'lwpupl_checkUsername' );
 	
 	const res = await fetch('/wp-admin/admin-ajax.php', {
 			method: 'POST',
@@ -288,7 +288,7 @@ setInvalid (  res.user_exists, () => console.log(usernameInvalid) );
 }*/
 
 
-async function registerUser ( ) {
+async function lwpupl_registerUser ( ) {
 
 
   /*var isRegister = uri.includes("#Register");
@@ -343,14 +343,14 @@ async function registerUser ( ) {
 		} else {
 			
 			document.getElementById("UPusername").value = tempUsername;
-			checkUsername();
+			lwpupl_checkUsername();
 			if ( usernameInvalid == false ) {
 					var dataSend = new FormData();
 				dataSend.append( 'username', tempUsername );
 				dataSend.append( 'signature', data.signature );
 				dataSend.append( 'address', account );
 				dataSend.append( 'profileAvatar', tempAvatar );
-				dataSend.append( 'action', 'registerUser' );
+				dataSend.append( 'action', 'lwpupl_registerUser' );
 				
 				const res = await fetch('/wp-admin/admin-ajax.php', {
 					method: 'POST',
@@ -404,7 +404,7 @@ async function registerUser ( ) {
 		dataSend.append( 'signature', data.signature );
 		dataSend.append( 'address', account );
 		dataSend.append( 'profileAvatar', profileAvatar.profileAvatar );
-		dataSend.append( 'action', 'registerUser' );
+		dataSend.append( 'action', 'lwpupl_registerUser' );
 		
 		const res = await fetch('/wp-admin/admin-ajax.php', {
 			method: 'POST',
@@ -519,13 +519,13 @@ async function registerUser ( ) {
 
 	if ( buttonType.mode == 1 ) {
 		
-		dataSend.append( 'action', 'remove_user' );
+		dataSend.append( 'action', 'lwpupl_remove_user' );
 		dataSend.append( 'removeAddress', 1 );
 		
 		
 	} else if ( buttonType.mode == 2 ) {
 		
-		dataSend.append( 'action', 'get_data' );
+		dataSend.append( 'action', 'lwpupl_get_data' );
 		
 	}
 
@@ -601,7 +601,7 @@ async function registerUser ( ) {
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
   function openModal() {
-	registerUser();
+	lwpupl_registerUser();
     setIsOpen(true);
   }
 
@@ -629,7 +629,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
 
 		if ( runOnce == 1 ) {
 			
-			var temp = document.getElementById("lukso_wp_login");
+			var temp = document.getElementById("lwpupl_login");
 		  temp.parentNode.classList.add("jeg_nav_account");
 		  temp = temp.parentNode;
 		  temp.previousElementSibling.remove();
@@ -676,7 +676,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
 		
 		if ( runOnce == 1 ) {
 			
-			var temp = document.getElementById("lukso_wp_login");
+			var temp = document.getElementById("lwpupl_login");
 		  temp.parentNode.classList.add("jeg_nav_account");
 		  temp = temp.parentNode;
 		  temp.previousElementSibling.remove();
@@ -707,7 +707,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
         style={customStyles}
         contentLabel="Lukso Registration">
 		<img style={{ height: '21px', marginBottom: '10px' }} src="/wp-content/plugins/WordUP-Login/frontend/public/choose_a_username.jpg" />
-		  <input style={{ color: 'black', backgroundColor: 'white' }} type="text" id="UPusername" class="" onKeyUp={ () => checkUsername() } />
+		  <input style={{ color: 'black', backgroundColor: 'white' }} type="text" id="UPusername" class="" onKeyUp={ () => lwpupl_checkUsername() } />
 		  <p className='account-data' style={{color: registrationStatus.colour}}>{registrationStatus.message}</p>
           <button 
 			style={{ 
@@ -721,7 +721,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
 		backgroundColor: 'transparent'
 		  
 		}}
-		  type="button" onClick={() => registerUser()} className='btn register' alt="Register using UP!"></button>
+		  type="button" onClick={() => lwpupl_registerUser()} className='btn register' alt="Register using UP!"></button>
 		  
          
    </Modal>
@@ -734,7 +734,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
 	  
 	  if ( runOnce == 1 ) {
 	  
-		  var temp = document.getElementById("lukso_wp_login");
+		  var temp = document.getElementById("lwpupl_login");
 		  temp.parentNode.classList.add("jeg_nav_account");
 		  temp = temp.parentNode;
 		  temp.previousElementSibling.remove();
@@ -823,7 +823,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
         style={customStyles}
         contentLabel="Lukso Registration">
 		<h1>Choose a username:</h1>
-		  <input type="text" id="UPusername" class="" onKeyUp={ () => checkUsername() } />
+		  <input type="text" id="UPusername" class="" onKeyUp={ () => lwpupl_checkUsername() } />
 		  <p className='account-data' style={{color: registrationStatus.colour}}>{registrationStatus.message}</p>
           <button 
 			style={{ 
@@ -838,7 +838,7 @@ if ( ( hostname == "luksoverse.io" || hostname == "staging.luksoverse.io" || hos
 		backgroundColor: 'transparent'
 		  
 		}}
-		  type="button" onClick={() => registerUser()} className='btn register' alt="Register using UP!"></button>
+		  type="button" onClick={() => lwpupl_registerUser()} className='btn register' alt="Register using UP!"></button>
 		  
          
    </Modal>
