@@ -100,7 +100,7 @@ Your login system on /wp-login.php has now changed to a system where you can cho
 
 3. Optionally you can add our HTML shortcode `[lukso_wp_login]` to your homepage to create a UP login there.
 
-Until our plugin is approved and live in the WordPress appstore your can download it here and upload it manually to WordPress: https://github.com/Luksoverse/WordUP-Login/blob/main/WordUP-Login.zip
+Until our plugin is approved and live in the WordPress appstore your can download it here and upload it manually to WordPress: https://github.com/Luksoverse/WordUP-Login/blob/main/WordPress%20files/WordUP-Login.zip
 
 ## Credits
 |Project|Contributors|
