@@ -15,7 +15,7 @@
 |Project info | Location |
 | ---- | ----------- |
 | WordPress App | https://github.com/Luksoverse/WordUP-Login/blob/main/WordUP-Login.zip |
-| WordPress appstore | Coming soon (Waiting for approval)
+| WordPress appstore | https://wordpress.org/plugins/wordup-login/
 | React app | https://github.com/Luksoverse/WordUP-Login/tree/main/React%20App%20-%20Source |
 | Backend server | https://github.com/Luksoverse/WordUP-Login-Backend |
 | Live url | https://luksoverse.io/wp-login.php
